@@ -2,6 +2,7 @@ package gh_client
 
 import (
 	"context"
+	"log"
 
 	"github.com/google/go-github/v79/github"
 )
@@ -20,6 +21,8 @@ func NewClient(ghToken string) Client {
 	c := github.NewClient(nil)
 	if ghToken != "" {
 		c = c.WithAuthToken(ghToken)
+	} else {
+		log.Println("GitHub client created without authentication.")
 	}
 	return &client{Client: c}
 }

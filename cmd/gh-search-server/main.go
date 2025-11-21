@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 
 	pb "weave-github-search/api/gh-search/v1"
+	gh_client "weave-github-search/internal/gh-client"
 	ghss "weave-github-search/internal/gh-search-service"
 )
 
@@ -31,7 +32,8 @@ func main() {
 
 	server := grpc.NewServer()
 
-	pb.RegisterGithubSearchServiceServer(server, &ghss.Server{})
+	ghc := gh_client.NewClient(os.Getenv("GITHUB_TOKEN"))
+	pb.RegisterGithubSearchServiceServer(server, &ghss.Server{Ghc: ghc})
 
 	fmt.Println("gRPC Server starting on port " + grpc_port)
 
