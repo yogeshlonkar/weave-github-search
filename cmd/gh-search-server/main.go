@@ -32,7 +32,10 @@ func main() {
 
 	server := grpc.NewServer()
 
-	ghc := gh_client.NewClient(os.Getenv("GITHUB_TOKEN"))
+	ghc, err := gh_client.NewClient(os.Getenv("GITHUB_TOKEN"))
+	if err != nil {
+		log.Fatalf("failed to create GitHub client: %v", err)
+	}
 	pb.RegisterGithubSearchServiceServer(server, &ghss.Server{Ghc: ghc})
 
 	fmt.Println("gRPC Server starting on port " + grpc_port)
@@ -53,12 +56,12 @@ func gracefulShutdown(server *grpc.Server) {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
 	<-signalChan
-	log.Println("Initiating graceful shutdown...")
+	log.Println("initiating graceful shutdown...")
 	timer := time.AfterFunc(10*time.Second, func() {
-		log.Println("Server couldn't stop gracefully in time. Doing force stop.")
+		log.Println("server couldn't stop gracefully in time. Doing force stop.")
 		server.Stop()
 	})
 	defer timer.Stop()
 	server.GracefulStop()
-	fmt.Println("Server stopped gracefully.")
+	fmt.Println("server stopped gracefully.")
 }

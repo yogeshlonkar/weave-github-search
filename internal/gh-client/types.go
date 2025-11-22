@@ -2,7 +2,7 @@ package gh_client
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/google/go-github/v79/github"
 )
@@ -17,12 +17,12 @@ type client struct {
 }
 
 // NewClient creates a new GitHub client with optional authentication.
-func NewClient(ghToken string) Client {
+func NewClient(ghToken string) (Client, error) {
 	c := github.NewClient(nil)
 	if ghToken != "" {
 		c = c.WithAuthToken(ghToken)
 	} else {
-		log.Println("GitHub client created without authentication.")
+		return nil, fmt.Errorf("GitHub client can not be created without authentication.")
 	}
-	return &client{Client: c}
+	return &client{Client: c}, nil
 }

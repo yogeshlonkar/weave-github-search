@@ -3,6 +3,7 @@ package gh_search_service
 import (
 	"context"
 	"fmt"
+	"log"
 
 	pb "weave-github-search/api/gh-search/v1"
 	gh_client "weave-github-search/internal/gh-client"
@@ -22,10 +23,13 @@ type Server struct {
 
 // Search handles the SearchRequest and returns a SearchResponse.
 func (s *Server) Search(ctx context.Context, req *pb.SearchRequest) (*pb.SearchResponse, error) {
-	codeSearchResult, err := s.Ghc.SearchCode(ctx, req.GetSearchTerm(), req.GetUser(), defaultPageSize, pageNumber)
+	term := req.GetSearchTerm()
+	user := req.GetUser()
+	codeSearchResult, err := s.Ghc.SearchCode(ctx, term, user, defaultPageSize, pageNumber)
 	if err != nil {
 		return nil, fmt.Errorf("error searching code: %v", err)
 	}
+	log.Printf("found %d code results for term: %s, user: %s\n", codeSearchResult.GetTotal(), term, user)
 	response := &pb.SearchResponse{}
 	response.Results = make([]*pb.Result, 0)
 	for _, codeResult := range codeSearchResult.CodeResults {

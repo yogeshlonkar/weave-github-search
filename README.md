@@ -25,7 +25,16 @@ go test ./...
 Run the following command to start the gRPC server:
 
 ```shell
+export GITHUB_TOKEN=#YOUR_GITHUB_TOKEN_HERE
 go run cmd/gh-search-server/main.go
+```
+
+## Running the client
+
+Run the following command to start the interactive gRPC client:
+
+```shell
+go run cmd/gh-search-client/main.go
 ```
 
 ## File structure
@@ -36,6 +45,7 @@ go run cmd/gh-search-server/main.go
 │   └── gh-search
 │       └── v1              # gRPC service definitions and proto files
 ├── cmd
+|   └── gh-search-client    # interactive client for testing
 │   └── gh-search-server    # main application entrypoint
 ├── internal
 │   ├── gh-client           # GitHub API client implementation

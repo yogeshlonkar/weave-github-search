@@ -11,8 +11,10 @@ import (
 )
 
 func TestClient_SearchCode(t *testing.T) {
+	assertT := assert.New(t)
 	ghToken := "random-generated-token"
-	c := NewClient(ghToken)
+	c, err := NewClient(ghToken)
+	assertT.NoError(err, "NewClient should not return an error")
 	total := 2
 	mockedHTTPClient := mock.NewMockedHTTPClient(
 		mock.WithRequestMatchHandler(
@@ -42,7 +44,6 @@ func TestClient_SearchCode(t *testing.T) {
 	page := 1
 
 	results, err := c.SearchCode(context.Background(), query, user, perPage, page)
-	assertT := assert.New(t)
 	assertT.NoError(err, "SearchCode should not return an error")
 	assertT.NotNil(results, "Results should not be nil")
 	assertT.Equal(total, results.GetTotal(), "Total results should match expected value")

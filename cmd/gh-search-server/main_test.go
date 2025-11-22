@@ -7,6 +7,7 @@ import (
 )
 
 func Example_main() {
+	os.Setenv("GITHUB_TOKEN", "test_token")
 	go main()
 	time.Sleep(150 * time.Millisecond)
 	p, err := os.FindProcess(os.Getpid())
@@ -17,11 +18,12 @@ func Example_main() {
 	time.Sleep(150 * time.Millisecond)
 	// Output:
 	// gRPC Server starting on port 50051
-	// Server stopped gracefully.
+	// server stopped gracefully.
 }
 
 func Example_main_withPortEnv() {
 	os.Setenv("GRPC_PORT", "60051")
+	os.Setenv("GITHUB_TOKEN", "test_token")
 	go main()
 	time.Sleep(150 * time.Millisecond)
 	p, err := os.FindProcess(os.Getpid())
@@ -32,5 +34,5 @@ func Example_main_withPortEnv() {
 	time.Sleep(150 * time.Millisecond)
 	// Output:
 	// gRPC Server starting on port 60051
-	// Server stopped gracefully.
+	// server stopped gracefully.
 }

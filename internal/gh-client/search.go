@@ -3,7 +3,7 @@ package gh_client
 import (
 	"context"
 	"fmt"
-	"net/url"
+	"log"
 
 	"github.com/google/go-github/v79/github"
 )
@@ -15,8 +15,8 @@ func (c *client) SearchCode(ctx context.Context, query, user string, perPage, pa
 	if user != "" {
 		query += " user:" + user
 	}
-	query = url.QueryEscape(query)
-	opts := &github.SearchOptions{Sort: "created", Order: "asc", ListOptions: github.ListOptions{PerPage: perPage, Page: page}}
+	log.Printf("executing GitHub code search with query: %s\n", query)
+	opts := &github.SearchOptions{TextMatch: true, Sort: "created", Order: "asc", ListOptions: github.ListOptions{PerPage: perPage, Page: page}}
 
 	codeResult, resp, err := c.Client.Search.Code(ctx, query, opts)
 	if err != nil {
