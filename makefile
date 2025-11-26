@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 export GRPC_PORT ?= 50051
 
 compile: gen-grpc
