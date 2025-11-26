@@ -1,23 +1,32 @@
+// Github Search Service Protocol Buffers Definition
 syntax = "proto3";
 
-option go_package = "weave-github-search/api/gh_search/v1;v1";
+option go_package = "weave-github-search/api/gh-search/v1;v1";
 
 package gh_search.v1;
 
+// GithubSearchService defines the gRPC service for searching GitHub repositories.
 service GithubSearchService {
+    // Search performs a search for the given term and user in GitHub repositories.
 	rpc Search(SearchRequest) returns (SearchResponse);
 }
 
+// SearchRequest represents a request to search GitHub repositories.
 message SearchRequest {
+    // The term to search for.
 	string search_term = 1;
+    // The GitHub username to filter the search.
 	string user = 2;
 }
 
+// SearchResponse represents the response from a GitHub search.
 message SearchResponse {
-	repeated Result results = 1;
+    // A list of search results.
+	repeated SearchResult results = 1;
 }
 
-message Result {
+// Result represents a single search result from GitHub.
+message SearchResult {
 	string file_url = 1;
 	string repo = 2;
 }

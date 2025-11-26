@@ -1,4 +1,4 @@
-package gh_client
+package github
 
 import (
 	"context"
@@ -16,11 +16,19 @@ func (c *client) SearchCode(ctx context.Context, query, user string, perPage, pa
 		query += " user:" + user
 	}
 	log.Printf("executing GitHub code search with query: %s\n", query)
-	opts := &github.SearchOptions{TextMatch: true, Sort: "created", Order: "asc", ListOptions: github.ListOptions{PerPage: perPage, Page: page}}
+	opts := &github.SearchOptions{
+		TextMatch: true,
+		Sort:      "created",
+		Order:     "asc",
+		ListOptions: github.ListOptions{
+			PerPage: perPage,
+			Page:    page,
+		},
+	}
 
 	codeResult, resp, err := c.Client.Search.Code(ctx, query, opts)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error executing GitHub code search: %v", err)
 	}
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("GitHub API returned status code %d", resp.StatusCode)

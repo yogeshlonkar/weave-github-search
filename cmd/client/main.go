@@ -21,10 +21,8 @@ func main() {
 		grpc_port = port
 	}
 	serverAddr := "localhost:" + grpc_port
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
-	conn, err := grpc.NewClient(serverAddr, opts...)
+
+	conn, err := grpc.NewClient(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

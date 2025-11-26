@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -12,8 +13,8 @@ import (
 	"google.golang.org/grpc"
 
 	pb "weave-github-search/api/gh-search/v1"
-	gh_client "weave-github-search/internal/gh-client"
-	ghss "weave-github-search/internal/gh-search-service"
+	"weave-github-search/internal/github"
+	"weave-github-search/internal/services"
 )
 
 // main function sets up and starts the gRPC server for the GitHub Search Service.
@@ -31,12 +32,14 @@ func main() {
 	}
 
 	server := grpc.NewServer()
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
 
-	ghc, err := gh_client.NewClient(os.Getenv("GITHUB_TOKEN"))
+	ghc, err := github.NewClient(ctx, os.Getenv("GITHUB_TOKEN"))
 	if err != nil {
 		log.Fatalf("failed to create GitHub client: %v", err)
 	}
-	pb.RegisterGithubSearchServiceServer(server, &ghss.Server{Ghc: ghc})
+	pb.RegisterGithubSearchServiceServer(server, &services.Server{GithubClient: ghc})
 
 	fmt.Println("gRPC Server starting on port " + grpc_port)
 

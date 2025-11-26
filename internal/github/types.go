@@ -1,10 +1,11 @@
-package gh_client
+package github
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/google/go-github/v79/github"
+	"golang.org/x/oauth2"
 )
 
 // Client defines the interface for interacting with the GitHub API.
@@ -17,12 +18,13 @@ type client struct {
 }
 
 // NewClient creates a new GitHub client with optional authentication.
-func NewClient(ghToken string) (Client, error) {
-	c := github.NewClient(nil)
-	if ghToken != "" {
-		c = c.WithAuthToken(ghToken)
-	} else {
+func NewClient(ctx context.Context, ghToken string) (Client, error) {
+	if ghToken == "" {
 		return nil, fmt.Errorf("GitHub client can not be created without authentication.")
 	}
-	return &client{Client: c}, nil
+
+	c := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: ghToken},
+	))
+	return &client{Client: github.NewClient(c)}, nil
 }

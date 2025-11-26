@@ -1,4 +1,4 @@
-package gh_client
+package github
 
 import (
 	"context"
@@ -12,9 +12,13 @@ import (
 
 func TestClient_SearchCode(t *testing.T) {
 	assertT := assert.New(t)
+
+	// create client
 	ghToken := "random-generated-token"
-	c, err := NewClient(ghToken)
+	c, err := NewClient(context.Background(), ghToken)
 	assertT.NoError(err, "NewClient should not return an error")
+
+	// mocking
 	total := 2
 	mockedHTTPClient := mock.NewMockedHTTPClient(
 		mock.WithRequestMatchHandler(
@@ -42,8 +46,9 @@ func TestClient_SearchCode(t *testing.T) {
 	user := ""
 	perPage := 10
 	page := 1
-
 	results, err := c.SearchCode(context.Background(), query, user, perPage, page)
+
+	// assertions
 	assertT.NoError(err, "SearchCode should not return an error")
 	assertT.NotNil(results, "Results should not be nil")
 	assertT.Equal(total, results.GetTotal(), "Total results should match expected value")

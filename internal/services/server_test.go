@@ -1,19 +1,20 @@
-package gh_search_service
+package services
 
 import (
 	"context"
 	"testing"
-	pb "weave-github-search/api/gh-search/v1"
-	gh_client "weave-github-search/internal/gh-client"
 
 	"github.com/google/go-github/v79/github"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	pb "weave-github-search/api/gh-search/v1"
+	_github "weave-github-search/internal/github"
 )
 
 type mockGhc struct {
 	mock.Mock
-	gh_client.Client
+	_github.Client
 }
 
 func (m *mockGhc) SearchCode(ctx context.Context, query, user string, perPage, page int) (*github.CodeSearchResult, error) {
@@ -22,6 +23,7 @@ func (m *mockGhc) SearchCode(ctx context.Context, query, user string, perPage, p
 }
 
 func TestServer_Search(t *testing.T) {
+	// mocking
 	mockedGhc := new(mockGhc)
 	total := 2
 	mockedGhc.On("SearchCode", mock.Anything, "golang", "testuser", 10, 1).Return(&github.CodeSearchResult{
@@ -37,7 +39,9 @@ func TestServer_Search(t *testing.T) {
 			},
 		},
 	}, nil)
-	server := &Server{Ghc: mockedGhc}
+
+	// test server
+	server := &Server{GithubClient: mockedGhc}
 	req := &pb.SearchRequest{
 		SearchTerm: "golang",
 		User:       "testuser",
@@ -45,6 +49,7 @@ func TestServer_Search(t *testing.T) {
 
 	resp, err := server.Search(context.Background(), req)
 
+	// assertions
 	assertT := assert.New(t)
 	assertT.NoError(err)
 	assertT.NotNil(resp)
