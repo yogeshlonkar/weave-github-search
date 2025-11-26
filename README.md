@@ -8,39 +8,54 @@ It has a client to interact with the gRPC server.
 
 ## Development
 
-Required tools:
-
-- [protoc](https://grpc.io/docs/protoc-installation/)
-- protoc-gen-go - `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
-- protoc-gen-go-grpc - `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
+```shell
+make setup-tools
+```
 
 ### Generating gRPC code
 
 ```shell
-protoc --proto_path=api --go_out=api --go_opt=paths=source_relative --go-grpc_out=api --go-grpc_opt=paths=source_relative api/gh-search/v1/*.proto
+make gen-grpc
 ```
 
 ## Running tests
 
 ```shell
-go test ./...
+make test
 ```
 
 ## Running the server
+
+### On localhost
 
 Run the following command to start the gRPC server:
 
 ```shell
 export GITHUB_TOKEN=#YOUR_GITHUB_TOKEN_HERE
-go run cmd/server/main.go
+make run-server
 ```
+
+### Using Docker
+
+Build the Docker image:
+
+```shell
+make build-docker
+export GITHUB_TOKEN=#YOUR_GITHUB_TOKEN_HERE
+make run-docker
+```
+
+Both of above options will start the gRPC server on port `50051`.
+The port can be changed by exporting `GRPC_PORT` environment variable before running the server.
+
+You can then connect to the server using the interactive client mentioned below or any other gRPC client.
 
 ## Running the client
 
 Run the following command to start the interactive gRPC client:
 
 ```shell
-go run cmd/client/main.go
+make run-client
 ```
 
 ## File structure
@@ -50,10 +65,17 @@ go run cmd/client/main.go
 ├── api
 │   └── gh-search
 │       └── v1      # gRPC service definitions and proto files
+├── bin             # compiled binaries
 ├── cmd
 |   └── client      # interactive client for testing
 ├── internal
 │   ├── github      # GitHub API client implementation
 │   └── grpc        # gRPC service implementation
+│── Dockerfile      # Dockerfile for containerizing the application
+│── go.mod          # Go module file
+│── go.sum          # Go module checksum file
 │── main.go         # main application entrypoint
+│── main_tset.go    # main application tests
+│── makefile        # Makefile with build and run commands
+└── README.md       # this file
 ```
