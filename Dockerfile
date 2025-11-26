@@ -10,12 +10,9 @@ COPY . .
 
 RUN make install
 
-
 FROM scratch
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/bin/server /server
-
-EXPOSE 50051
 
 ENTRYPOINT ["/server"]

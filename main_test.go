@@ -7,14 +7,20 @@ import (
 )
 
 func Example_main() {
-	os.Setenv("GITHUB_TOKEN", "test_token")
+	_ = os.Setenv("GITHUB_TOKEN", "test_token")
+
 	go main()
+
 	time.Sleep(150 * time.Millisecond)
 	p, err := os.FindProcess(os.Getpid())
 	if err != nil {
 		log.Fatalf("failed to find process: %v", err)
 	}
-	p.Signal(os.Interrupt)
+
+	if err = p.Signal(os.Interrupt); err != nil {
+		log.Fatalf("failed to send interrupt signal: %v", err)
+	}
+
 	time.Sleep(150 * time.Millisecond)
 	// Output:
 	// gRPC Server starting on port 50051
@@ -22,15 +28,21 @@ func Example_main() {
 }
 
 func Example_main_withPortEnv() {
-	os.Setenv("GRPC_PORT", "60051")
-	os.Setenv("GITHUB_TOKEN", "test_token")
+	_ = os.Setenv("GRPC_PORT", "60051")
+	_ = os.Setenv("GITHUB_TOKEN", "test_token")
+
 	go main()
+
 	time.Sleep(150 * time.Millisecond)
 	p, err := os.FindProcess(os.Getpid())
 	if err != nil {
 		log.Fatalf("failed to find process: %v", err)
 	}
-	p.Signal(os.Interrupt)
+
+	if err = p.Signal(os.Interrupt); err != nil {
+		log.Fatalf("failed to send interrupt signal: %v", err)
+	}
+
 	time.Sleep(150 * time.Millisecond)
 	// Output:
 	// gRPC Server starting on port 60051

@@ -26,7 +26,7 @@ func (c *client) SearchCode(ctx context.Context, query, user string, perPage, pa
 		},
 	}
 
-	codeResult, resp, err := c.Client.Search.Code(ctx, query, opts)
+	codeResult, resp, err := c.Search.Code(ctx, query, opts)
 	if err != nil {
 		return nil, fmt.Errorf("error executing GitHub code search: %v", err)
 	}

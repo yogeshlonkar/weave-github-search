@@ -20,7 +20,7 @@ type client struct {
 // NewClient creates a new GitHub client with optional authentication.
 func NewClient(ctx context.Context, ghToken string) (Client, error) {
 	if ghToken == "" {
-		return nil, fmt.Errorf("GitHub client can not be created without authentication.")
+		return nil, fmt.Errorf("GitHub client can not be created without authentication")
 	}
 
 	c := oauth2.NewClient(ctx, oauth2.StaticTokenSource(

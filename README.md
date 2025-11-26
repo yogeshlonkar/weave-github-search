@@ -8,55 +8,23 @@ It has a client to interact with the gRPC server.
 
 ## Development
 
-```shell
-make setup-tools
-```
+| Command               | Description                                                                  |
+|-----------------------|------------------------------------------------------------------------------|
+| `make setup-tools`    | Install required development tools                                           |
+| `make gen-grpc`       | Generate gRPC code from proto files                                          |
+| `make test`           | Run tests                                                                    |
+| `make lint`           | Run linter. golangci-lint must be installed (see `make setup-tools`)         |
+| `make compile`        | Compile gRPC server                                                          |
+| `make compile-client` | Compile gRPC client                                                          |
+| `make run-server`     | Run gRPC server on localhost. Requires `GITHUB_TOKEN` env variable to be set |
+| `make build-docker`   | Build Docker image                                                           |
+| `make run-docker`     | Run gRPC server using Docker. Requires `GITHUB_TOKEN` env variable to be set |
+| `make run-client`     | Run interactive gRPC client                                                  |
 
-### Generating gRPC code
-
-```shell
-make gen-grpc
-```
-
-## Running tests
-
-```shell
-make test
-```
-
-## Running the server
-
-### On localhost
-
-Run the following command to start the gRPC server:
-
-```shell
-export GITHUB_TOKEN=#YOUR_GITHUB_TOKEN_HERE
-make run-server
-```
-
-### Using Docker
-
-Build the Docker image:
-
-```shell
-make build-docker
-export GITHUB_TOKEN=#YOUR_GITHUB_TOKEN_HERE
-make run-docker
-```
-
-Both of above options will start the gRPC server on port `50051`.
+Both of `make run-server` and `make run-docker` options will start the gRPC server on port `50051`.
 The port can be changed by exporting `GRPC_PORT` environment variable before running the server.
 
 You can then connect to the server using the interactive client mentioned below or any other gRPC client.
-
-## Running the client
-
-Run the following command to start the interactive gRPC client:
-
-```shell
-make run-client
-```
 
 ## File structure
 

@@ -24,7 +24,7 @@ func TestClient_SearchCode(t *testing.T) {
 		mock.WithRequestMatchHandler(
 			mock.GetSearchCode,
 			http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-				w.Write(mock.MustMarshal(github.CodeSearchResult{
+				_, err := w.Write(mock.MustMarshal(github.CodeSearchResult{
 					Total: &total,
 					CodeResults: []*github.CodeResult{
 						{
@@ -37,6 +37,9 @@ func TestClient_SearchCode(t *testing.T) {
 						},
 					},
 				}))
+				if err != nil {
+					t.Fatalf("failed to write mock response: %v", err)
+				}
 			}),
 		),
 	)
