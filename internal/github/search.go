@@ -1,0 +1,35 @@
+package github
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/google/go-github/v79/github"
+)
+
+// SearchCode searches GitHub code based on the provided query and user.
+//   - If a user is specified, the search is limited to that user's repositories.
+//   - It returns the search results or an error if the search fails.
+func (c *client) SearchCode(ctx context.Context, query, user string) (*github.CodeSearchResult, error) {
+	if user != "" {
+		query += " user:" + user
+	}
+	log.Printf("executing GitHub code search with query: %s\n", query)
+	opts := &github.SearchOptions{
+		TextMatch: true,
+		Sort:      "created",
+		Order:     "asc",
+	}
+
+	codeResult, resp, err := c.Search.Code(ctx, query, opts)
+	if err != nil {
+		return nil, fmt.Errorf("error executing GitHub code search: %v", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("GitHub API returned status code %d", resp.StatusCode)
+	}
+
+	return codeResult, nil
+}
