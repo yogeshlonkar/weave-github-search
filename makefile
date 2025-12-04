@@ -42,7 +42,7 @@ setup-tools:
 	fi
 	@if ! command -v golangci-lint &> /dev/null; then \
 		echo "golangci-lint could not be found, installing..."; \
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.7.1; \
+		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	fi
 	@echo "all tools are set up."
 
