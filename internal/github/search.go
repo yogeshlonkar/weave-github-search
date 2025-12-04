@@ -9,8 +9,8 @@ import (
 )
 
 // SearchCode searches GitHub code based on the provided query and user.
-// If a user is specified, the search is limited to that user's repositories.
-// It returns the search results or an error if the search fails.
+//   - If a user is specified, the search is limited to that user's repositories.
+//   - It returns the search results or an error if the search fails.
 func (c *client) SearchCode(ctx context.Context, query, user string, perPage, page int) (*github.CodeSearchResult, error) {
 	if user != "" {
 		query += " user:" + user
@@ -30,7 +30,7 @@ func (c *client) SearchCode(ctx context.Context, query, user string, perPage, pa
 	if err != nil {
 		return nil, fmt.Errorf("error executing GitHub code search: %v", err)
 	}
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("GitHub API returned status code %d", resp.StatusCode)
 	}
 

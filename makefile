@@ -19,13 +19,11 @@ clean:
 	@go clean -testcache
 
 lint:
-	go fmt ./...
-	go vet ./...
 	golangci-lint run ./...
 
 gen-grpc: setup-tools
 	@echo "Generating gRPC code from .proto files..."
-	@protoc --proto_path=api --go_out=api --go_opt=paths=source_relative --go-grpc_out=api --go-grpc_opt=paths=source_relative api/gh-search/v1/*.proto
+	protoc --proto_path=api --go_out=api --go_opt=paths=source_relative --go-grpc_out=api --go-grpc_opt=paths=source_relative api/gh-search/v1/*.proto
 
 setup-tools:
 	@if ! command -v protoc &> /dev/null; then \
