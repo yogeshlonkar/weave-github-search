@@ -14,7 +14,7 @@ It has a client to interact with the gRPC server.
 | `make gen-grpc`       | Generate gRPC code from proto files                                          |
 | `make test`           | Run tests                                                                    |
 | `make lint`           | Run linter. golangci-lint must be installed (see `make setup-tools`)         |
-| `make compile`        | Compile gRPC server                                                          |
+| `make compile-server` | Compile gRPC server                                                          |
 | `make compile-client` | Compile gRPC client                                                          |
 | `make run-server`     | Run gRPC server on localhost. Requires `GITHUB_TOKEN` env variable to be set |
 | `make build-docker`   | Build Docker image                                                           |

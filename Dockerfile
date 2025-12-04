@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN make compile
+RUN make compile-server
 
 FROM scratch
 

@@ -1,9 +1,9 @@
 SHELL := /bin/bash
 export GRPC_PORT ?= 50051
 
-.PHONY: compile compile-client
+.PHONY: compile-server compile-client
 
-compile: gen-grpc
+compile-server: gen-grpc
 	@mkdir -p bin
 	@echo "Building server..."
 	@go build -ldflags="-s -w" -o bin/server main.go
