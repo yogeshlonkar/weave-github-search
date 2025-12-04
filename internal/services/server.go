@@ -9,12 +9,6 @@ import (
 	"weave-github-search/internal/github"
 )
 
-// TODO: these constants could be moved as parameters on SearchRequest in the proto file
-const (
-	defaultPageSize = 10
-	pageNumber      = 1
-)
-
 // Server implements the GithubSearchService gRPC server.
 type Server struct {
 	pb.UnimplementedGithubSearchServiceServer
@@ -26,7 +20,7 @@ func (s *Server) Search(ctx context.Context, req *pb.SearchRequest) (*pb.SearchR
 	term := req.GetSearchTerm()
 	user := req.GetUser()
 
-	codeSearchResult, err := s.GithubClient.SearchCode(ctx, term, user, defaultPageSize, pageNumber)
+	codeSearchResult, err := s.GithubClient.SearchCode(ctx, term, user)
 	if err != nil {
 		return nil, fmt.Errorf("error searching code: %v", err)
 	}

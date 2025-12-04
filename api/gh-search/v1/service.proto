@@ -27,6 +27,8 @@ message SearchResponse {
 
 // Result represents a single search result from GitHub.
 message SearchResult {
+    // The URL of the file found in the search.
 	string file_url = 1;
+    // The repository where the file is located.
 	string repo = 2;
 }

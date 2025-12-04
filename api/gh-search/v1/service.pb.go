@@ -126,9 +126,11 @@ func (x *SearchResponse) GetResults() []*SearchResult {
 
 // Result represents a single search result from GitHub.
 type SearchResult struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileUrl       string                 `protobuf:"bytes,1,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
-	Repo          string                 `protobuf:"bytes,2,opt,name=repo,proto3" json:"repo,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The URL of the file found in the search.
+	FileUrl string `protobuf:"bytes,1,opt,name=file_url,json=fileUrl,proto3" json:"file_url,omitempty"`
+	// The repository where the file is located.
+	Repo          string `protobuf:"bytes,2,opt,name=repo,proto3" json:"repo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

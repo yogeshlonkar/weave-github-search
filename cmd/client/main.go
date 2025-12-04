@@ -50,18 +50,9 @@ func searchGitHub(c pb.GithubSearchServiceClient) {
 		log.Fatalf("failed to read input: %v", err)
 	}
 
-	var q string
-	var user string
-	for index, part := range strings.Split(input, " @") {
-		if index == 0 {
-			q = part
-			continue
-		}
-		if part != "" {
-			user = part
-			break
-		}
-	}
+	parts := strings.SplitN(input, " @", 2)
+	q := parts[0]
+	user := parts[1]
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

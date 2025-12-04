@@ -1,6 +1,8 @@
 SHELL := /bin/bash
 export GRPC_PORT ?= 50051
 
+.PHONY: compile compile-client
+
 compile: gen-grpc
 	@mkdir -p bin
 	@echo "Building server..."
@@ -32,15 +34,15 @@ setup-tools:
 	fi
 	@if [ ! -f "$$(go env GOPATH)/bin/protoc-gen-go" ]; then \
 		echo "protoc-gen-go not found, installing..."; \
-		go install google.golang.org/protobuf/cmd/protoc-gen-go@latest; \
+		go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10; \
 	fi
 	@if [ ! -f "$$(go env GOPATH)/bin/protoc-gen-go-grpc" ]; then \
 		echo "protoc-gen-go-grpc not found, installing..."; \
-		go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest; \
+		go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0; \
 	fi
 	@if ! command -v golangci-lint &> /dev/null; then \
 		echo "golangci-lint could not be found, installing..."; \
-		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.7.1; \
 	fi
 	@echo "all tools are set up."
 
@@ -48,20 +50,12 @@ test: gen-grpc
 	go test ./...
 
 run-server: compile
-	@if [ -z "$GITHUB_TOKEN" ]; then \
-		echo "GITHUB_TOKEN is not set"; \
-		exit 1; \
-	fi
 	./bin/server
 
 run-client: compile-client
 	./bin/client
 
-run-docker:
-	@if [ -z "$(GITHUB_TOKEN)" ]; then \
-		echo "GITHUB_TOKEN is not set"; \
-		exit 1; \
-	fi
+run-docker: build-docker
 	@echo "Running Docker container..."
 	@docker run \
 		--rm \

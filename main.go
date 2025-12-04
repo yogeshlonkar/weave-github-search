@@ -21,12 +21,12 @@ import (
 // It listens on a specified port (default 50051) and handles graceful shutdown on termination signals.
 // The server registers the GitHub Search Service implementation from the internal package.
 func main() {
-	grpc_port := "50051"
+	grpcPort := "50051"
 	if port := os.Getenv("GRPC_PORT"); port != "" {
-		grpc_port = port
+		grpcPort = port
 	}
 
-	listner, err := net.Listen("tcp", ":"+grpc_port)
+	listener, err := net.Listen("tcp", ":"+grpcPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -35,17 +35,22 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
-	ghc, err := github.NewClient(ctx, os.Getenv("GITHUB_TOKEN"))
+	githubToken := os.Getenv("GITHUB_TOKEN")
+	if githubToken == "" {
+		log.Fatal("GITHUB_TOKEN environment variable is not set")
+	}
+
+	ghc, err := github.NewClient(ctx, githubToken)
 	if err != nil {
 		log.Fatalf("failed to create GitHub client: %v", err)
 	}
 	pb.RegisterGithubSearchServiceServer(server, &services.Server{GithubClient: ghc})
 
-	fmt.Println("gRPC Server starting on port " + grpc_port)
+	fmt.Println("gRPC Server starting on port " + grpcPort)
 
-	go gracefulShutdown(server)
+	go gracefulShutdown(ctx, server)
 
-	if err := server.Serve(listner); err != nil {
+	if err := server.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 
@@ -55,10 +60,8 @@ func main() {
 // it waits for a termination signal and attempts to gracefully stop the server
 // within a specified timeout period. If the server does not stop gracefully
 // within the timeout, it forces a stop.
-func gracefulShutdown(server *grpc.Server) {
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
-	<-signalChan
+func gracefulShutdown(ctx context.Context, server *grpc.Server) {
+	<-ctx.Done()
 	log.Println("initiating graceful shutdown...")
 	timer := time.AfterFunc(10*time.Second, func() {
 		log.Println("server couldn't stop gracefully in time. Doing force stop.")

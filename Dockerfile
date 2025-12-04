@@ -1,14 +1,14 @@
 FROM golang:1.24-alpine AS builder
 
 RUN apk update && \
-    apk add --no-cache make protobuf-dev ca-certificates \
+    apk add --no-cache bash make protobuf-dev ca-certificates \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
 COPY . .
 
-RUN make install
+RUN make compile
 
 FROM scratch
 

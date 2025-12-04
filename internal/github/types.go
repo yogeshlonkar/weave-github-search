@@ -10,7 +10,7 @@ import (
 
 // Client defines the interface for interacting with the GitHub API.
 type Client interface {
-	SearchCode(ctx context.Context, query, user string, perPage, page int) (*github.CodeSearchResult, error)
+	SearchCode(ctx context.Context, query, user string) (*github.CodeSearchResult, error)
 }
 
 type client struct {

@@ -20,23 +20,24 @@ func TestClient_SearchCode(t *testing.T) {
 
 	// mocking
 	total := 2
+	expected := github.CodeSearchResult{
+		Total: &total,
+		CodeResults: []*github.CodeResult{
+			{
+				HTMLURL:    github.Ptr("example.com/file1"),
+				Repository: &github.Repository{Name: github.Ptr("repo1")},
+			},
+			{
+				HTMLURL:    github.Ptr("example.com/file2"),
+				Repository: &github.Repository{Name: github.Ptr("repo2")},
+			},
+		},
+	}
 	mockedHTTPClient := mock.NewMockedHTTPClient(
 		mock.WithRequestMatchHandler(
 			mock.GetSearchCode,
 			http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-				_, err := w.Write(mock.MustMarshal(github.CodeSearchResult{
-					Total: &total,
-					CodeResults: []*github.CodeResult{
-						{
-							HTMLURL:    github.Ptr("example.com/file1"),
-							Repository: &github.Repository{Name: github.Ptr("repo1")},
-						},
-						{
-							HTMLURL:    github.Ptr("example.com/file2"),
-							Repository: &github.Repository{Name: github.Ptr("repo2")},
-						},
-					},
-				}))
+				_, err := w.Write(mock.MustMarshal(expected))
 				if err != nil {
 					t.Fatalf("failed to write mock response: %v", err)
 				}
@@ -47,15 +48,9 @@ func TestClient_SearchCode(t *testing.T) {
 
 	query := "example search"
 	user := ""
-	perPage := 10
-	page := 1
-	results, err := c.SearchCode(context.Background(), query, user, perPage, page)
+	results, err := c.SearchCode(context.Background(), query, user)
 
 	// assertions
 	assertT.NoError(err, "SearchCode should not return an error")
-	assertT.NotNil(results, "Results should not be nil")
-	assertT.Equal(total, results.GetTotal(), "Total results should match expected value")
-	for _, result := range results.CodeResults {
-		t.Logf("File URL: %s, Repo: %s", result.GetHTMLURL(), result.GetRepository())
-	}
+	assertT.Equal(&expected, results, "SearchCode should return expected results")
 }

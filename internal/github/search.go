@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/google/go-github/v79/github"
 )
@@ -11,7 +12,7 @@ import (
 // SearchCode searches GitHub code based on the provided query and user.
 //   - If a user is specified, the search is limited to that user's repositories.
 //   - It returns the search results or an error if the search fails.
-func (c *client) SearchCode(ctx context.Context, query, user string, perPage, page int) (*github.CodeSearchResult, error) {
+func (c *client) SearchCode(ctx context.Context, query, user string) (*github.CodeSearchResult, error) {
 	if user != "" {
 		query += " user:" + user
 	}
@@ -20,10 +21,6 @@ func (c *client) SearchCode(ctx context.Context, query, user string, perPage, pa
 		TextMatch: true,
 		Sort:      "created",
 		Order:     "asc",
-		ListOptions: github.ListOptions{
-			PerPage: perPage,
-			Page:    page,
-		},
 	}
 
 	codeResult, resp, err := c.Search.Code(ctx, query, opts)

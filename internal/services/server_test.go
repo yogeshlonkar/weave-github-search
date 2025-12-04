@@ -17,8 +17,8 @@ type mockGhc struct {
 	_github.Client
 }
 
-func (m *mockGhc) SearchCode(ctx context.Context, query, user string, perPage, page int) (*github.CodeSearchResult, error) {
-	args := m.Called(ctx, query, user, perPage, page)
+func (m *mockGhc) SearchCode(ctx context.Context, query, user string) (*github.CodeSearchResult, error) {
+	args := m.Called(ctx, query, user)
 	return args.Get(0).(*github.CodeSearchResult), args.Error(1)
 }
 
@@ -26,7 +26,7 @@ func TestServer_Search(t *testing.T) {
 	// mocking
 	mockedGhc := new(mockGhc)
 	total := 2
-	mockedGhc.On("SearchCode", mock.Anything, "golang", "testuser", 10, 1).Return(&github.CodeSearchResult{
+	mockedGhc.On("SearchCode", mock.Anything, "golang", "testuser").Return(&github.CodeSearchResult{
 		Total: &total,
 		CodeResults: []*github.CodeResult{
 			{
@@ -52,11 +52,11 @@ func TestServer_Search(t *testing.T) {
 	// assertions
 	assertT := assert.New(t)
 	assertT.NoError(err)
-	assertT.NotNil(resp)
-	assertT.Equal(2, len(resp.Results))
-	assertT.Equal("example.com/file1", resp.Results[0].FileUrl)
-	assertT.Equal("x/repo1", resp.Results[0].Repo)
-	assertT.Equal("example.com/file2", resp.Results[1].FileUrl)
-	assertT.Equal("x/repo2", resp.Results[1].Repo)
+	assertT.Equal(&pb.SearchResponse{
+		Results: []*pb.SearchResult{
+			{FileUrl: "example.com/file1", Repo: "x/repo1"},
+			{FileUrl: "example.com/file2", Repo: "x/repo2"},
+		},
+	}, resp)
 	mockedGhc.AssertExpectations(t)
 }
